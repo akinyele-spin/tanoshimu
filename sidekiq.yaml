@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sidekiq-deployment
+  labels:
+    app: sidekiq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidekiq
+  template:
+    metadata:
+      labels:
+        app: sidekiq
+    spec:
+      containers:
+        - name: sidekiq
+          image: docker.io/drummeraki/tanoshimu:live
+          command:
+            [
+              "bundle",
+              "exec",
+              "sidekiq",
+              "-q",
+              "active_storage_analysis",
+              "-q",
+              "active_storage_purge",
+              "-q",
+              "batch_queue",
+              "-q",
+              "sync",
+              "-q",
+              "default",
+            ]
+          imagePullPolicy: Always
+          env:
+            - name: REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: redis-url
+          envFrom:
+            - secretRef:
+              name: app-secrets

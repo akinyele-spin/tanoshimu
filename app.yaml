@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tanoshimu-deployment
+  labels:
+    app: tanoshimu
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tanoshimu
+  template:
+    metadata:
+      labels:
+        app: tanoshimu
+    spec:
+      containers:
+        - name: tanoshimu
+          image: docker.io/drummeraki/tanoshimu:live
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: PORT
+              value: "80"
+          envFrom:
+            - secretRef:
+              name: app-secrets
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tanoshimu-service
+spec:
+  type: NodePort
+  selector:
+    app: tanoshimu
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 31000

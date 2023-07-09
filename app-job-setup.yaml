@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tanoshimu-job-setup
+  labels:
+    app: tanoshimu
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: tanoshimu
+          image: docker.io/drummeraki/tanoshimu:live
+          imagePullPolicy: Always
+          command: ["bin/rails", "db:setup"]
+          env:
+            - name: REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: redis-url
+            - name: DISABLE_DATABASE_ENVIRONMENT_CHECK
+              value: "1"
+          envFrom:
+            - secretRef:
+              name: app-secrets
