@@ -42,4 +42,4 @@ spec:
                   key: redis-url
           envFrom:
             - secretRef:
-              name: app-secrets
+                name: app-secrets
