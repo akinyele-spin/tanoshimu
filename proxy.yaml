@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tanoshimu-proxy-deployment
+  labels:
+    app: tanoshimu-proxy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tanoshimu-proxy
+  template:
+    metadata:
+      labels:
+        app: tanoshimu-proxy
+    spec:
+      containers:
+        - name: tanoshimu-proxy
+          image: docker.io/drummeraki/tanoshimu-proxy:live
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: PORT
+              value: "80"
+            - name: ORIGIN_URL
+              value: https://tanoshimu.akinyele-demos.ca:31000
+            - name: TARGET_URL
+              value: http://tanoshimu-service:8000
+            - name: REDIRECT_HOST
+              value: https://tanoshimu.akinyele-demos.ca:31000
+            - name: REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: redis-url
+          envFrom:
+            - secretRef:
+                name: proxy-secrets
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tanoshimu-proxy-service
+spec:
+  type: NodePort
+  selector:
+    app: tanoshimu-proxy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 31001

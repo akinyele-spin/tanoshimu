@@ -19,10 +19,10 @@ spec:
           image: docker.io/drummeraki/tanoshimu:live
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8000
           env:
             - name: PORT
-              value: "80"
+              value: "8000"
           envFrom:
             - secretRef:
                 name: app-secrets
@@ -33,11 +33,9 @@ kind: Service
 metadata:
   name: tanoshimu-service
 spec:
-  type: NodePort
   selector:
     app: tanoshimu
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
-      nodePort: 31000
+      port: 8000
+      targetPort: 8000
