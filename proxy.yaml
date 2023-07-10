@@ -24,11 +24,11 @@ spec:
             - name: PORT
               value: "80"
             - name: ORIGIN_URL
-              value: https://tanoshimu.akinyele-demos.ca:31000
+              value: http://tanoshimu.akinyele-demos.ca:31000
             - name: TARGET_URL
               value: http://tanoshimu-service:8000
             - name: REDIRECT_HOST
-              value: https://tanoshimu.akinyele-demos.ca:31000
+              value: http://tanoshimu.akinyele-demos.ca:31000
             - name: REDIS_URL
               valueFrom:
                 configMapKeyRef:
